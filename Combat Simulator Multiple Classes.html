@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   
+<style>
+    p {text-align: center;}
+    
+    body { 
+  background-image: url('https://64.media.tumblr.com/31994884698a19fbcb6741d4030049ec/0f7e753b499d17f9-ee/s2048x3072/897cf132a6ac9068978ecd4d6e693b1ce0a77ae4.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center; 
+}
+
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+.center2 {
+  margin: 0;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  margin-top: -45px;
+    }
+.warning {
+  margin: 0;
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);   
+  color: #993300; 
+    }
+.intro {
+  margin: 0;
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);   
+  color: #8A0303;
+    }
+ 
+.select {
+  margin: 0;
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);    
+    }
+.story{
+        bottom: 10%;
+        left:21%;
+        margin: 1px;
+        position: absolute;
+        margin: 1px;
+        color: rgb(238, 235, 230);
+    }
+   
+</style>
+   
+   
+    <meta charset="UTF-8">
+    <title>Combat Sim</title>
+    
+      
+       
+       <script language ="JavaScript">
+        
+    //build objects to define player classes
+
+        function Player(health, strength, accuracy, defence) {
+            this.health = health;
+            this.strength = strength;
+            this.accuracy = accuracy;
+            this.defence = defence;
+        }
+
+        
+       
+    //construct player classes and enemy class    
+        var soldier = new Player(30, 8, 25, 3);
+        var mage = new Player(25, 10, 20, 1);
+        var rogue = new Player(30, 7, 25, 5);
+        var enemy = new Player(30, 8, 25, 3);
+        var output = "";
+        var SoldierAttackChecker = false
+        var MageAttackChecker = false
+        var RogueAttackChecker = false
+        var hideSoldierBoolean = false
+        var hideMageBoolean = false
+        var hideRogueBoolean = false
+        
+        
+       
+        
+           
+    //SOLDIERS COMBAT TURN
+        var SoldierCombat = function(){
+            SoldierAttackChecker = true
+            //battleMusic.play();
+            CallSoldierDamage();
+            CallSoldierAccuracy();
+            SoldierAttack();
+            
+            if (enemy.health > 0){
+                attackLoop();
+            }
+            else{
+                CallCombatLog();
+            }
+        }
+        
+        var SoldierCleaveCombat = function(){
+            SoldierAttackChecker = true
+            //battleMusic.play();
+            CallSoldierDamage();
+            CallSoldierAccuracy();
+            SoldierCleave();
+            
+            if (enemy.health > 0){
+                attackLoop();
+            }
+            else{
+                CallCombatLog();
+            }
+        }
+    //MAGE COMBAT TURN    
+        var MageCombat = function(){
+            MageAttackChecker = true
+            //battleMusic.play();
+            CallMageDamage();
+            CallMageAccuracy();
+            MageAttack();
+            
+            if (enemy.health > 0){
+                attackLoop();
+            }
+            else{
+                CallCombatLog();
+            }
+        }
+
+        var fireballCombat = function(){
+            MageAttackChecker = true;
+            //battleMusic.play();
+            CallMageDamage();
+            CallMageAccuracy();
+            Fireball();
+
+            if(enemy.health > 0){
+                attackLoop();
+            }
+            else{
+                CallCombatLog();
+            }
+        }
+        
+    //ROGUE COMBAT TURN    
+        var RogueCombat = function(){
+            RogueAttackChecker = true
+            //battleMusic.play();
+            CallRogueDamage();
+            CallRogueAccuracy();
+            RogueAttack();
+            
+            if (enemy.health > 0){
+                attackLoop();
+            }
+            else{
+                CallCombatLog();
+            }
+        }
+        
+        var EvicerateCombat = function(){
+            RogueAttackChecker = true
+            //battleMusic.play();
+            CallRogueDamage();
+            CallRogueAccuracy();
+            Evicerate();
+            
+            if (enemy.health > 0){
+                attackLoop();
+            }
+            else{
+                CallCombatLog();
+            }
+        }
+        
+    //players defensive turn
+        var SoldierBlock = function(){
+            //battleMusic.play();
+            playerTurn = false
+            CallSoldierDefence();
+            defenceLoop();
+        }
+        //calll mage defensive turn
+        var MageBlock = function(){
+            //battleMusic.play();
+            playerTurn = false;
+            CallMageDefence();
+            defenceLoop();
+        }
+        //call rogue defensive turn
+        var RogueBlock = function(){
+            //battleMusic.play();
+            playerTurn = false;
+            CallRogueDefence();
+            defenceLoop();
+        }
+        
+        
+    //defence loop function
+        function defenceLoop(){
+           if(playerTurn === false){
+                playerTurn = true;
+                CallEnemyDamage();
+                CallEnemyAccuracy();
+                SoldierDefence();
+                MageDefence();
+                RogueDefence();
+                CallCombatLog();
+                }
+            else{
+                playerTurn = false;
+            } 
+        }
+        
+    //attack loop function. Calling the enemy's accuracy and damage values.    
+        function attackLoop(){
+            if(playerTurn === false){
+                playerTurn = true;
+                CallEnemyDamage();
+                CallEnemyAccuracy();
+                EnemyAttack();
+                CallCombatLog();
+                }
+            else{
+                playerTurn = false;
+            }
+        }
+        
+        
+  //CALL SOLDIER ATTACK
+        
+        var SoldierAttack = function(){
+            MageAttackChecker = false
+            RogueAttackChecker = false
+            
+             if(accuracy > 1){
+                 swordHitSound.play();
+                 enemy.health -= damage
+                 if (enemy.health < 0){ //Prevent health from going below 0
+                     enemy.health = 0
+                 }
+                 alert("player dealt " + damage + " points of damage. The enemy has " + enemy.health + " health remaining!")
+                 playerTurn = false;
+                 
+             }
+             else{
+                 swordMissSound.play();
+                 alert("You missed!")
+                 playerTurn = false;
+             }
+         }
+        
+        var SoldierCleave = function(){
+            MageAttackChecker = false
+            RogueAttackChecker = false
+            
+             if(accuracy > 5){
+                 
+                 while (damage < 4){
+                     CallSoldierDamage();
+                 }
+                 damage = (damage*2)
+                 enemy.health -= damage
+                 if (enemy.health < 0){ //Prevent health from going below 0
+                     enemy.health = 0
+                 }
+                 cleaveSound.play();
+                 alert("Your Cleave hits for " + damage + " points of damage. The enemy has " + enemy.health + " health remaining!")
+                 playerTurn = false;
+                 
+             }
+             else{
+                 swordMissSound.play();
+                 alert("You missed!")
+                 playerTurn = false;
+             }
+         }
+        
+        
+    //CALL MAGE ATTACK
+        
+        var MageAttack = function(){
+            SoldierAttackChecker = false;
+            RogueAttackChecker = false;
+            
+             
+            
+             if(accuracy > 1){
+                 magicHitSound.play();
+                 enemy.health -= damage
+                 if (enemy.health < 0){ //Prevent health from going below 0
+                     enemy.health = 0
+                 }
+                 alert("player dealt " + damage + " points of damage. The enemy has " + enemy.health + " health remaining!")
+                 playerTurn = false;
+                 
+             }
+             else{
+                 alert("Your spell failed!")
+                 playerTurn = false;
+             }
+         }
+        
+        var Fireball = function(){
+            SoldierAttackChecker = false;
+            RogueAttackChecker = false;
+            
+            
+            if(accuracy > 6){
+                while (damage < 5){
+                    CallMageDamage();
+                }
+                
+                damage = (damage*2);
+                enemy.health -= damage;
+                if(enemy.health < 0){
+                    enemy.health = 0;
+                }
+                fireballSound.play();
+                alert("You cast fireball!  It hits for " + damage + " points of damage. The enemy has " + enemy.health + " health remaining!")
+                 playerTurn = false;
+
+             }
+             else{
+                 alert("Your spell failed!")
+                 playerTurn = false;
+            }
+        }
+        
+        
+    //CALL ROGUE ATTACK
+        
+        var RogueAttack = function(){
+            MageAttackChecker = false
+            SoldierAttackChecker = false
+             
+            
+             if(accuracy > 20){
+               evicerateSound.play();
+               enemy.health -= (damage*3)
+                 if (enemy.health < 0){ //Prevent health from going below 0
+                     enemy.health = 0
+                 }
+                 
+                 alert("You hit for " + damage + " points of damage! Critical hit!! The enemy has " + enemy.health + " health remaining!")
+                 playerTurn = false;  
+             }
+             else if(accuracy > 1){
+                 swordHitSound.play();
+                 enemy.health -= damage
+                 if (enemy.health < 0){ //Prevent health from going below 0
+                     enemy.health = 0
+                 }
+                 alert("player dealt " + damage + " points of damage. The enemy has " + enemy.health + " health remaining!")
+                 playerTurn = false;
+                 
+             }
+             else{
+                 swordMissSound.play();
+                 alert("You missed!")
+                 playerTurn = false;
+             }
+         }
+        
+        
+        var Evicerate = function(){
+            MageAttackChecker = false;
+            SoldierAttackChecker = false;
+            
+            
+            if(accuracy >6){
+                
+                while (damage < 6){
+                    CallRogueDamage();
+                }
+                damage = (damage*2);
+                enemy.health -= damage;
+                if(enemy.health < 0){
+                    enemy.health = 0;
+                }
+                evicerateSound.play();
+                alert("You Evicerate your opponent for " + damage + " points of damage! The enemy has " + enemy.health + " health remaining!")
+                playerTurn = false;
+            }
+            else{
+                swordMissSound.play();
+                alert("You missed!")
+                playerTurn = false;
+            }
+        }        
+        
+   //CALL ENEMY ATTACK. Also includes checks to see which class is attacking and distribute damage to the right health parameters
+        
+        var EnemyAttack = function(){
+             if (SoldierAttackChecker == true){
+                if(accuracy > 1){
+                 swordHitSound_2.play();
+                 soldier.health -= damage
+                
+                 if (soldier.health < 0){ //Prevent health from going below 0
+                     soldier.health = 0
+                 }
+                 
+                 alert("Enemy dealt " + damage + " points of damage. You have " + soldier.health + " health remaining!")
+                 playerTurn = true;
+             }
+             else{
+                 swordMissSound.play()
+                 alert("The enemy missed!")
+                 playerTurn = true;
+             }
+           }
+            else if (MageAttackChecker == true){
+                if(accuracy > 1){
+                 swordHitSound_2.play();
+                 mage.health -= damage
+                
+                 if (mage.health < 0){ //Prevent health from going below 0
+                     mage.health = 0
+                 }
+                 
+                 alert("Enemy dealt " + damage + " points of damage. You have " + mage.health + " health remaining!")
+                 playerTurn = true;
+             }
+             else{
+                 swordMissSound.play()
+                 alert("The enemy missed!")
+                 playerTurn = true;
+             }
+            }
+            else if (RogueAttackChecker == true){
+                if(accuracy > 1){
+                 swordHitSound_2.play();
+                 rogue.health -= damage
+                
+                 if (rogue.health < 0){ //Prevent health from going below 0
+                     rogue.health = 0
+                 }
+                 
+                 alert("Enemy dealt " + damage + " points of damage. You have " + rogue.health + " health remaining!")
+                 playerTurn = true;
+             }
+             else{
+                 swordMissSound.play()
+                 alert("The enemy missed!")
+                 playerTurn = true;
+             }
+            }   
+            
+         }
+        
+   //Call player defence modifier
+        var SoldierDefence = function(){
+            if(accuracy > 1){
+            swordBlockSound.play();    
+            damage -= defence
+                if(damage < 0){
+                   damage = 0
+                }
+            soldier.health -= damage
+            alert("Enemy dealt " + damage + " points of damage. You blocked " + defence + " points!")
+            playerTurn = true;
+           }
+            
+            else{
+                swordMissSound.play();
+                alert("The enemy missed!")
+                playerTurn = true;
+            }
+        }
+        
+    //Call combat log to print health totals to page depending on class
+        var CombatLog 
+            CallCombatLog = function(){
+               if(SoldierAttackChecker == true && soldier.health >= 1){
+                document.getElementById("theForm").innerHTML = "Soldier Health: " + soldier.health + "<br> Enemy Health: " + enemy.health + "<br>"
+                   
+                if(enemy.health < 1){
+                 battleMusic.stop();
+                 battleMusicEnd.play();
+                    if (hideSoldierBoolean == true){
+                        hideSoldierAction();   
+                    }
+                    else if (hideMageBoolean == true){
+                        hideMageAction();
+                    }
+                    else if (hideRogueBoolean == true){
+                        hideRogueAction();
+                    }
+
+                 hideRestart();
+                 document.getElementById("theForm").innerHTML = "You have defeated the enemy!<br>"   
+                }
+                 
+             }
+             else if(MageAttackChecker == true && mage.health >= 1){
+                        document.getElementById("theForm").innerHTML = "Mage Health: " + mage.health + "<br> Enemy Health: " + enemy.health + "<br>"
+                        if(enemy.health < 1){
+                 battleMusic.stop();
+                 battleMusicEnd.play();
+                    if (hideSoldierBoolean == true){
+                        hideSoldierAction();   
+                    }
+                    else if (hideMageBoolean == true){
+                        hideMageAction();
+                    }
+                    else if (hideRogueBoolean == true){
+                        hideRogueAction();
+                    }
+
+                 hideRestart();
+                 document.getElementById("theForm").innerHTML = "You have defeated the enemy!<br>"   
+                }
+            }
+            else if(RogueAttackChecker == true && rogue.health >= 1){
+                        document.getElementById("theForm").innerHTML = "Rogue Health: " + rogue.health + "<br> Enemy Health: " + enemy.health + "<br>"
+                        if(enemy.health < 1){
+                 battleMusic.stop();
+                 battleMusicEnd.play();
+                    if (hideSoldierBoolean == true){
+                        hideSoldierAction();   
+                    }
+                    else if (hideMageBoolean == true){
+                        hideMageAction();
+                    }
+                    else if (hideRogueBoolean == true){
+                        hideRogueAction();
+                    }
+
+                 hideRestart();
+                 document.getElementById("theForm").innerHTML = "You have defeated the enemy!<br>"   
+                }
+            }
+             else {
+                 battleMusic.stop();
+                 gameOverMusic.play();
+                    if (hideSoldierBoolean == true){
+                        hideSoldierAction();   
+                    }
+                    else if (hideMageBoolean == true){
+                        hideMageAction();
+                    }
+                    else if (hideRogueBoolean == true){
+                        hideRogueAction();
+                    }
+                 
+                 hideRestart();
+                 document.getElementById("theForm").innerHTML = "You are dead!<br>" 
+            }
+                
+        
+        }
+        
+        
+ //Call damage           
+         var damage;
+           
+             CallSoldierDamage = function(){
+                 damage = Math.ceil(Math.random()*soldier.strength);
+             }
+             
+             CallEnemyDamage = function(){
+                 damage = Math.ceil(Math.random()*enemy.strength);
+             }
+             
+             CallMageDamage = function(){
+                 damage = Math.ceil(Math.random()*mage.strength);
+             }
+             
+             CallRogueDamage = function(){
+                 damage = Math.ceil(Math.random()*rogue.strength);
+             }
+             
+  //Call accuracy           
+        var accuracy;
+           
+           CallSoldierAccuracy = function(){
+               accuracy = Math.floor(Math.random()*soldier.accuracy)
+           }
+           
+           CallEnemyAccuracy = function(){
+               accuracy = Math.floor(Math.random()*enemy.accuracy)
+           }
+           
+           CallMageAccuracy = function(){
+               accuracy = Math.floor(Math.random()*mage.accuracy)
+           }
+           
+           CallRogueAccuracy = function(){
+               accuracy = Math.floor(Math.random()*rogue.accuracy)
+           }
+           
+  //Call Defence
+           
+         var defence;
+            
+            CallSoldierDefence = function(){
+                defence = Math.ceil(Math.random()*soldier.defence)
+            }
+            
+            CallMageDefence = function(){
+                defence = Math.ceil(Math.random()*mage.defence)
+            }
+            
+            CallRogueDefence = function(){
+                defence = Math.ceil(Math.random()*rogue.defence)
+            }
+            
+    //RESTART GAME
+            
+            function restartGame(){
+                soldier.health = 30
+                mage.health = 25
+                rogue.health = 30
+                enemy.health = 30
+                battleMusic.stop();
+                battleMusicEnd.stop();
+                gameOverMusic.stop();
+                hideSoldierBoolean = false
+                hideMageBoolean = false
+                hideRogueBoolean = false
+                document.getElementById("theForm").innerHTML = ""
+            }
+        
+    // SOUND MAYBE
+            
+            function sound(src) {
+  this.sound = document.createElement("audio");
+  this.sound.src = src;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  document.body.appendChild(this.sound);
+  this.play = function(){
+    this.sound.play();
+  }
+  this.stop = function(){
+    this.sound.pause();
+    this.sound.currentTime = 0
+  }
+  this.dampen = function(){
+      this.sound.volume = 0.5
+  }
+}
+        var swordHitSound;
+        var swordHitSound_2;
+        var swordMissSound;
+        var swordBlockSound;
+        var magicHitSound;
+        var battleMusic;
+        var battleMusicEnd;
+        var gameOverMusic;
+        
+           
+           function startGame(){
+               swordHitSound = new sound("https://assets.mixkit.co/sfx/preview/mixkit-metal-hit-woosh-1485.mp3")
+               swordHitSound_2 = new sound("https://assets.mixkit.co/sfx/preview/mixkit-quick-saber-cut-2158.mp3")
+               swordMissSound = new sound("https://assets.mixkit.co/sfx/preview/mixkit-dagger-woosh-1487.mp3")
+               swordBlockSound = new sound("https://assets.mixkit.co/sfx/preview/mixkit-metallic-sword-strike-2160.mp3")
+               magicHitSound = new sound("https://assets.mixkit.co/sfx/preview/mixkit-thin-icicles-spell-882.mp3")
+               battleMusic = new sound("http://www.ffmages.com/ffvii/ost/disc-1/10-let-the-battles-begin.mp3")
+               battleMusicEnd = new sound("http://www.ffmages.com/ffvii/ost/disc-1/11-fanfare.mp3")
+               gameOverMusic = new sound("http://www.ffmages.com/ffvii/ost/disc-2/15-continue.mp3")
+               fireballSound = new sound("https://assets.mixkit.co/sfx/preview/mixkit-fireball-spell-1347.mp3")
+               evicerateSound = new sound("https://assets.mixkit.co/sfx/preview/mixkit-fantasy-sword-slide-2798.mp3")
+               cleaveSound = new sound("https://assets.mixkit.co/sfx/preview/mixkit-sword-slash-swoosh-1476.mp3")
+               battleMusic.dampen();
+               battleMusicEnd.dampen();
+               gameOverMusic.dampen();   
+           }
+           
+           
+    //FUNCTION TO HIDE BUTTONS       
+           
+    function hideSoldierAction(){
+        var hideA = document.getElementById("SoldierButtons");
+        if (hideA.style.display === "none"){
+            hideA.style.display = "block";
+        }
+        else {
+            hideA.style.display = "none";
+        }
+    }
+           
+    function hideMageAction(){
+        var hideB = document.getElementById("MageButtons");
+        if (hideB.style.display === "none"){
+            hideB.style.display = "block";
+        }
+        else {
+            hideB.style.display = "none";
+        }
+    }
+           
+    function hideRogueAction(){
+        var hideC = document.getElementById("RogueButtons");
+        if (hideC.style.display === "none"){
+            hideC.style.display = "block";
+        }
+        else {
+            hideC.style.display = "none";
+        }
+    }
+    
+    function hideRestart(){
+        var hideR = document.getElementById("RestartButton");
+        if (hideR.style.display === "none"){
+            hideR.style.display = "block";
+        }
+        else {
+            hideR.style.display = "none";
+        }
+    }
+           
+    function hideChampSelect(){
+        var hideCS = document.getElementById("ClassSelect");
+        if (hideCS.style.display === "none"){
+            hideCS.style.display = "block";
+        }
+        else {
+            hideCS.style.display = "none";
+        }
+    }
+        
+    //CHAMPION SELECTION
+           
+           function championSelection() {
+                var champion = document.getElementById("selectChamp").value;
+                
+                if(champion == "Soldier"){
+                    battleMusic.play();
+                    hideSoldierAction();
+                    hideChampSelect();
+                    hideSoldierBoolean = true    
+                }
+               else if(champion == "Mage"){
+                   battleMusic.play();
+                   hideMageAction();
+                   hideChampSelect();
+                   hideMageBoolean = true
+               }
+               else if(champion == "Rogue"){
+                   battleMusic.play();
+                   hideRogueAction();
+                   hideChampSelect();
+                   hideRogueBoolean = true
+               }
+           }
+            
+    
+        //function used for testing.  this will "kill" the enemy
+   function instaKill(){
+       enemy.health = 0
+   }     
+    
+    
+    </script>
+</head>
+<body onload="startGame(); hideRestart(); hideSoldierAction(); hideMageAction(); hideRogueAction();">
+ 
+ <div id="ClassSelect" class="select">
+     
+<select id="selectChamp" onchange="championSelection();">
+     <option value="Filler">Select Champion
+     <option value="Soldier">Soldier
+     <option value="Mage">Mage
+     <option value="Rogue">Rogue
+</select>
+     
+ </div> 
+ <div id="buttonContainer"> <!--button container-->
+
+  <div id="SoldierButtons" class="center">
+       
+         <input type="button" value="Sword Strike" onclick="SoldierCombat()">
+         <input type="button" value="Shield Bash" onclick="SoldierBlock()">
+         <input type="button" value="Cleave" onclick="SoldierCleaveCombat()">
+         
+    </div>
+    
+    <div id="MageButtons" class="center">
+       
+        <input type="button" value="Ice Bolt" onclick="MageCombat()">
+        <input type="button" value="Magic Shield" onclick="MageBlock()">
+        <input type="button" value="Fireball" onclick="fireballCombat()">
+            
+    </div>
+    
+    <div id="RogueButtons" class="center">
+        
+        <input type="button" value="Blade Flurry" onclick="RogueCombat()">
+        <input type="button" value="Parry" onclick="RogueBlock()">
+        <input type="button" value="Evicerate" onclick="EvicerateCombat()">
+        
+    </div>
+      
+    <div id="RestartButton" class="center">
+       
+        <input type="button" value="Restart" onclick="restartGame(); hideChampSelect(); hideRestart();">
+        
+    </div>
+</div> <!-- end whole button container-->
+    <div id=CombatInfo class="center2">
+      <p id="theForm"></p>  
+    </div>
+
+    <div id=intro class="intro">
+        <h1>Roll Initiative, Champion!  Battle Has Begun!</h1>
+        
+    </div>
+    
+    <div id=WarningMessage class="warning">
+        <h3>WARNING!  Game plays loud music, please adjust your volume.</h3>
+        
+        <!-- <input type="button" value="Insta-Kill" onclick="instaKill();"> !-->
+    </div> 
+   
+    
+</body>
+<main>
+    <div id = "mainStory" class = "story">
+        <p>You are enjoying a peaceful walk back to your home village after a successful dungron raid.</p>  
+            <p>Laden with plunder and loot from your struggles wit the ghastly abominations of The Necromancer, you make a slow meandering pace back home.</p>  
+            <p>You find yourself at a large river crossing; the only way aross looks to be a rickiy old bridge with questionable constructions.</p>
+        <p>As you start to make a cross, you see a shadowy figure appear on the other side of the bridge, coaelising from the shadows themselves.</p> 
+            <p>It's The Necromancer returned to take his vengence and his treasures back! Defend yourself, champion!</p>
+    </div>
+</main>
+</html>
